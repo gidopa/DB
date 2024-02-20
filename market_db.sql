@@ -2,6 +2,7 @@ DROP DATABASE IF EXISTS market_db; -- 만약 market_db가 존재하면 우선 �
 CREATE DATABASE market_db;
 
 USE market_db;
+
 CREATE TABLE member -- 회원 테이블
 ( mem_id  		CHAR(8) NOT NULL PRIMARY KEY, -- 사용자 아이디(PK)
   mem_name    	VARCHAR(10) NOT NULL, -- 이름
