@@ -97,6 +97,39 @@ where addr='경기' or addr='전남' or addr='경남';
 select mem_name, addr
 from member
 where addr in ('경기','전남','경남');
+-- Like 문자열 데이터의 일부 글자가 포함되어 있는 열의 데이터를 조회할 수 있는 예약어
+-- __의 경우 글자 수 까지 정확하게 검사
+select *
+from member
+where mem_name like '__핑크';
+
+select *
+from member
+where mem_name like '우%';
+
+select *
+from member
+where mem_name like '%크';
+
+select *
+from member
+where mem_name like '%미%';
+
+select *
+from member
+where mem_name like '%친구';
+
+-- 서브쿼리 한 쿼리 문장안에 다수의 select문을 넣음
+-- ( 키가 에이핑크 보다 큰 그룹을 조회함 )
+select mem_name, height
+from member
+where height > (select height 
+from member 
+where mem_name = '에이핑크');
+-- (에이핑크가 사는 주소와 같은 주소에 사는 그룹을 조회함)
+select *
+from member
+where addr = ( select addr from member where mem_name = '에이핑크');
 
 CREATE VIEW buy_member AS
 SELECT 
@@ -109,9 +142,115 @@ SELECT
     b.amount
 FROM buy b
 INNER JOIN member m ON b.mem_id = m.mem_id;
+
+create view left_view as 
+select 
+    member.mem_id  AS member_mem_id,   -- member 테이블의 mem_id 열에 별칭을 지정
+    member.mem_name, 
+    member.mem_number, 
+    member.addr, 
+    member.phone1, 
+    member.phone2, 
+    member.height, 
+    member.debut_date,
+    buy.num, 
+    buy.prod_name, 
+    buy.group_name, 
+    buy.price, 
+    buy.amount
+from member
+left join buy on member.mem_id = buy.mem_id;
+
+select * from left_view;
+
 select *
 from buy_member
 order by num ASC;
+
+select * from buy;
+select * 
+from member
+order by debut_date ASC;
+
+select * from member 
+order by debut_date DESC;
+
+select mem_name, mem_id, height
+from member
+where height > 164
+order by height DESC;
+
+select *
+from member
+order by height DESC, debut_date ASC;
+-- 3건만 조회
+select *
+from member
+limit 3;
+-- 3번째 인덱스부터 2개의 데이터를 조회
+select *
+from member
+order by height DESC
+limit 3, 2;
+
+select *
+from left_view;
+
+-- distinct 열의 데이터들이 중복되면 중복된 데이터를 하나만 남기고 조회함
+-- select distinct 
+select distinct addr
+from member
+order by addr ; 
+
+-- group by 절은 집계함수 중 하나랑 같이 작성해서 사용
+-- SUM(열명) : 열에 저장된 데이터들을 합계를 해서 반환
+-- AVG(열명) : 열에 저장된 데이터들의 평균을 구해 반환
+-- MIN() : 최솟값 반환 / MAX() : 최대값 반환 
+-- count() : 행의 갯수를 반환  // count(distinct) : 중복되는 열 제외하고 행 갯수 반환
+-- select 열명, 집게함수(열명2) from 테이블명
+-- group by 그룹으로 묶을 데이터가 저장된 열명
+-- having 조건식 order by ~ limit ~
+
+select * from buy
+order by mem_id ;
+
+select mem_id, SUM(amount)
+from buy
+group by mem_id;
+
+select mem_id '그룹 아이디', SUM(amount) '구매 수량', SUM(amount*price) '총 가격'
+from buy
+group by mem_id;
+
+select mem_id, AVG(amount)
+from buy
+group by mem_id;
+
+select mem_id, AVG(total) 
+from (
+select mem_id, SUM(price*amount) as total 
+from buy 
+group by mem_id) as subquery
+group by mem_id;
+
+select count(*) from member;
+select * from member;
+
+select count(phone2) '연락처가 있는 그룹' from member;
+
+-- having 조건절 
+-- where 조건절 대신 그룹으로 묶어준 데이터의 조건검사를 하는 구문
+select mem_id, SUM(price*amount) total
+from buy
+group by mem_id
+having total > 1000;
+
+SELECT mem_id,
+       SUM(price*amount) AS total,
+       CASE WHEN SUM(price*amount) > 1000 THEN 'true' ELSE 'false' END AS gift
+FROM buy
+GROUP BY mem_id;
+select * from buy;
 
 
 
