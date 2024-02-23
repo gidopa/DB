@@ -252,8 +252,74 @@ FROM buy
 GROUP BY mem_id;
 select * from buy;
 
+/*
+	db내부에 만든 테이블에 데이터를 추가/수정/삭제하는 SQL
+    INSERT : 테이블에 행 데이터를 삽입하여 저장
+			 insert into 행을추가핧테이블명(추가할값의열명1, 추가할값의열명2, 추가할값의열명3)
+             values (값1,값2,값3);
+    UPDATE : 
+    DELETE
+*/
+use market_db;
+create table hongong1(
+	toy_id INT,
+    toy_name char(4),
+    age int
+);
+select * from hongong1;
+insert into hongong1(toy_id,toy_name,age)
+values (1,'우디',25);
 
+insert into hongong1(toy_id,toy_name)
+values(2,'버즈');
 
+-- hongon1 테이블에 열명의 순서를 바꿔 추가로 저장
+-- 주의할점은 ()사이에 작성한 열명의 순서에 맞게 values() 사이에 저장할 값을 넣어서 추가해야 함
+insert into hongong1(toy_name,age,toy_id)
+values('제시',20,3);
+-- 테이블에 열명을 생략하고 values()에 추가값만 순서에 맞게 넣어 삽입가능. 
+insert into hongong1 values(4,'영구',30);
+/*
+	auto_increment : 테이블 생성 시 열명에 설정하면 값이 자동으로 채워짐 1씩 증가하면서 채워진다 
+*/
+create table hongong2(
+toy_id int auto_increment primary key,
+toy_name char(4),
+age int
+);
+select * from hongong2;
+-- hongong2 테이블에 자동 증가하는 열의 데이터를 null로 채우고 데이터 추가
+insert into hongong2(toy_id,toy_name,age)
+values (null, '보핍', 25);
+insert into hongong2(toy_id,toy_name,age)
+values(null,'슬링키',22);
+insert into hongong2(toy_id,toy_name,age)
+values (null,'렉스',21);
+-- toy_id 값을 아예 안줘도 자동으로 채워줌
+insert into hongong2(toy_name,age)
+values ('맹구',100);
+-- 자동으로 증가된 값이 얼마인지 확인하는 검색 구문
+select last_insert_id();
+-- auto_increment를 지정한 열은 1부터 insert되기 때문에 특정 값 부터 insert 되게 설정 가능
+alter table hongong2 auto_increment = 100; -- 초기값이 100부터 
+insert into hongong2 (toy_name,age)
+values ('재남',35);
+insert into hongong2 (toy_name,age)
+values ('승규',26);
+-- auto_increment가 1씩 증가되고 있는데 속성으로 1이 아닌 다른 값으로도 증가 할 수 있음
+create table hongong3(
+toy_id int auto_increment primary key,
+toy_name char(4),
+age int
+);
+alter table hongong3 auto_increment = 1000;
+-- auto_increment 1000부터 추가되는데 3씩 증가하도록 하려고 하면, @@auto_increment_increment의 변수의 값을 바꾸면 된다
+set @@auto_increment_increment = 3;
+insert into hongong3 values(null,'토마스',20);
+insert into hongong3 values(null,'제임스',24);
+insert into hongong3 values(null,'고든',22);
+select * from hongong3;
+insert into hongong3 values(null,'갤러거',23),(null,'엔조',8),(null,'mz세도',25);
 
 
 
