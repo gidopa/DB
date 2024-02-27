@@ -233,6 +233,14 @@ from buy
 group by mem_id) as subquery
 group by mem_id;
 
+select * from buy;
+select mem_id, avg(total)
+from(
+select mem_id, sum(price*amount) as total
+from buy
+group by mem_id) as subquery
+group by mem_id;
+
 select count(*) from member;
 select * from member;
 
