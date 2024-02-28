@@ -94,7 +94,7 @@ select @txt, mem_name '그룹명' from member;
     제한할 행의 갯수도 변수를 선언하여 저장 해 놓고 변수명을 이용해서 값을 불러와 사용할 수 있다
 */
 set @count = 3;
-select mem_name, height from member order by height limit @count; -- 바로는 사용할 수 없음
+-- select mem_name, height from member order by height limit @count; -- 바로는 사용할 수 없음
 -- prepare 구문에 mySQL 이름에 select문을 준비 해 놓고 사용.
 -- 여기서 ? 는 아직 값이 정해지지 않아 나중에 결정 하겠다는 의미
 prepare mySQL from 'select mem_name, height from member order by height limit ?';
