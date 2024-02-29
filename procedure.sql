@@ -115,11 +115,90 @@ end $$
 delimiter ;
 call caseProc();
 
+drop procedure if exists caseProc;
+delimiter $$
+create procedure caseProc()
+begin
+select b.mem_id, b.mem_name,Sum(price*amount) "총 구매액",
+case
+when (sum(price*amount) >= 1500) then "최우수고객" 
+when (sum(price*amount) >= 1000) then "우수고객"
+when (sum(price*amount) >= 1) then "일반고객"
+else '유령고객'
+end '회원등급'
+from buy a
+right join member b on a.mem_id = b.mem_id
+group by b.mem_id
+order by SUM(price*amount) desc;
+end $$
+delimiter ;
 
+call caseProc();
+/*
+	market_db에서 buy테이블에 회원그룹이 구매한 상품정보가 있음
+    회원 그룹 아이디별로 총 구매액을 계산해서 회원등급을 4단계(최우수,우수,일반,유령)로 나누어서 조회
+*/
+select mem_id, SUM(price*amount) "총 구매액"
+from buy
+group by mem_id
+order by SUM(price*amount) desc;
 
+select b.mem_id, b.mem_name,Sum(price*amount) "총 구매액",
+case
+when (sum(price*amount) >= 1500) then "최우수고객" 
+when (sum(price*amount) >= 1000) then "우수고객"
+when (sum(price*amount) >= 1) then "일반고객"
+else '유령고객'
+end '회원등급'
+from buy a
+right join member b on a.mem_id = b.mem_id
+group by b.mem_id
+order by SUM(price*amount) desc;
+/*
+	while
+    조건문이 참이면 반복 
+*/
+drop procedure if exists whileProc;
+delimiter $$
+create procedure whileProc()
+begin
+declare i int;
+declare sum int;
+set i=1;
+set sum = 0;
+while (i<=100) do
+	set sum = sum + i;
+	set i = i + 1;
+end while;
+select '1부터 100까지의 합 : ', sum 	;
+end $$
+delimiter ;
+call whileProc();
 
-
-
+drop procedure if exists whileProc1;
+delimiter $$
+create procedure whileProc1()
+begin
+declare i int;
+declare sum int;
+set i=1;
+set sum = 0;
+mywhile :
+while (i<=100) do
+if(i % 4) =0 then
+	set i = i + 1;
+    iterate mywhile;
+end if;
+	set sum = sum + i;
+if(sum >= 1000) then
+	leave mywhile;
+end if;
+	set i = i + 1;
+end while;
+select '1부터 100까지의 합 : ', sum, i	;
+end $$
+delimiter ;
+call whileProc1();
 
 
 
